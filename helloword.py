@@ -1,3 +1,6 @@
+import ordini #import file ordini.py e importi tutto ciò che è in esso contenuto
+#from ordini import ordine_dict #importo solo ordine_dict da ordini.py
+
 def main():
     print("Hello, World!")
 
@@ -6,40 +9,23 @@ def fun2():
     print("secondo print")
 
 
-ordine = {
-    "nome": "pippo",
-    "num_ordine": 12345,
-    "data_ord": "31/12/2026",
-    "totale": 1234.87,
-    "tot_qty": 200,
-    "righe": [
-        {"numr": 1, "qta": 5, "prezzou": 30},
-        {"numr": 2, "qta": 10, "prezzou": 10},
-    ],
-}
+
 resi = [
     {"codice_reso": "R001", "quantita_resa": 2},
     {"codice_reso": "R002", "quantita_resa": 1},
 ]
 
-print(ordine["totale"])
+print(ordini.ordine_dict["totale"])
 tval = 0
 
 
-def rtot(tval):
-    for i in range(len(ordine["righe"])):
-        tval = tval + (ordine["righe"][i]["qta"] * ordine["righe"][i]["prezzou"])
-    print(tval)
-    return tval
-
-
-ordine["resi"] = sorted(resi, key=lambda t: t["quantita_resa"], reverse=True)
+#ordine["resi"] = sorted(resi, key=lambda t: t["quantita_resa"], reverse=True)
 
 if __name__ == "__main__":
     main()
     fun2()
     print("Calcolo tot ordine")
-    ordine["totale"] = rtot(tval)
-    print(ordine["totale"])
+    ordini.ordine_dict["totale"] = ordini.rtot(tval)
+    print(ordini.ordine_dict["totale"])
 
 print("finito!")
