@@ -1,4 +1,5 @@
 import argparse
+import json
 from datetime import date
 
 from sqlalchemy import create_engine, MetaData, text
@@ -24,7 +25,8 @@ def list_table_rows(engine, table_name: str) -> None:
         print(dict(r))
 
 
-def get_order_details(engine, order_number: int) -> None:
+def get_order_details(order_number: int) -> dict | None:
+    engine = create_db_engine()
     metadata = MetaData()
     metadata.reflect(bind=engine, only=["Ordini_testata", "Ordini_righe"])
     testata = metadata.tables.get("Ordini_testata")
@@ -42,23 +44,86 @@ def get_order_details(engine, order_number: int) -> None:
 
         if header is None:
             print(f"Ordine {order_number} non trovato.")
-            return
+            return None
 
         detail_rows = conn.execute(
             text("SELECT * FROM Ordini_righe WHERE num_ordine = :order_number"),
             {"order_number": order_number},
         ).mappings().all()
 
-    print(f"\nOrdine {order_number} - Intestazione:")
-    print('-' * 60)
-    print(dict(header))
-    print(f"\nRighe collegate ({len(detail_rows)}):")
-    print('-' * 60)
-    for r in detail_rows:
-        print(dict(r))
+    order_data = {
+        "header": dict(header),
+        "righe": [dict(r) for r in detail_rows],
+    }
+    json_output = json.dumps(order_data, ensure_ascii=False, indent=2)
+    print(json_output)
+    #return json_output
+    return order_data
 
 
-def get_available_order_numbers(engine) -> list[int]:
+def get_orders_by_article_code(article_code: str) -> list[dict]:
+    engine = create_db_engine()
+    metadata = MetaData()
+    metadata.reflect(bind=engine, only=["Ordini_testata", "Ordini_righe"])
+    testata = metadata.tables.get("Ordini_testata")
+    righe = metadata.tables.get("Ordini_righe")
+
+    if testata is None or righe is None:
+        print("Le tabelle Ordini_testata o Ordini_righe non sono state trovate nel database.")
+        return []
+
+    with engine.connect() as conn:
+        result = conn.execute(
+            text(
+                "SELECT t.*, r.* "
+                "FROM Ordini_testata t "
+                "JOIN Ordini_righe r ON t.num_ordine = r.num_ordine "
+                "WHERE r.cod_articolo = :article_code "
+                "ORDER BY t.num_ordine, r.cod_articolo"
+            ),
+            {"article_code": article_code},
+        ).mappings().all()
+
+    if not result:
+        print(f"Nessun ordine trovato per il codice articolo '{article_code}'.")
+        return []
+
+    orders: list[dict] = []
+    current_order_number = None
+    current_order = None
+
+    for row in result:
+        order_number = row["num_ordine"]
+        if order_number != current_order_number:
+            if current_order is not None:
+                orders.append(current_order)
+
+            current_order_number = order_number
+            current_order = {
+                "header": {
+                    key: row[key]
+                    for key in row.keys()
+                    if key in testata.columns.keys()
+                },
+                "righe": [],
+            }
+
+        detail_row = {
+            key: row[key]
+            for key in row.keys()
+            if key in righe.columns.keys()
+        }
+        current_order["righe"].append(detail_row)
+
+    if current_order is not None:
+        orders.append(current_order)
+
+    print(json.dumps(orders, ensure_ascii=False, indent=2))
+    return orders
+
+
+def get_available_order_numbers() -> list[int]:
+    engine = create_db_engine()
     metadata = MetaData()
     metadata.reflect(bind=engine, only=["Ordini_testata"])
     testata = metadata.tables.get("Ordini_testata")
@@ -178,16 +243,18 @@ def insert_order_from_dict(engine, order_data: dict) -> None:
         except IntegrityError as exc:
             raise RuntimeError(f"Errore di integrità durante l'inserimento: {exc}") from exc
 
+def create_db_engine(db_path: str = "Ordini.db"):
+    return create_engine(f"sqlite:///{db_path}", echo=False, future=True)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Stampa dati ordini da Ordini.db")
     parser.add_argument("--order", "-o", type=int, help="Numero dell'ordine da estrarre")
     args = parser.parse_args()
 
-    engine = create_engine("sqlite:///Ordini.db", future=True)
+    engine = create_db_engine()
 
     if args.order is not None:
-        get_order_details(engine, args.order)
+        get_order_details(args.order)
         return
 
     action = input("Vuoi aggiungere un ordine (A) o leggere un ordine specifico (L)? [L]: ").strip().lower()
@@ -195,14 +262,14 @@ def main() -> None:
         add_order_interactive(engine)
         return
 
-    available_orders = get_available_order_numbers(engine)
+    available_orders = get_available_order_numbers()
     if available_orders:
         print("Ordini disponibili:", ", ".join(str(n) for n in available_orders))
         selected = input("Inserisci il numero dell'ordine da visualizzare (premi invio per mostrare tutte le tabelle): ")
         if selected.strip():
             try:
                 order_number = int(selected.strip())
-                get_order_details(engine, order_number)
+                get_order_details(order_number)
                 return
             except ValueError:
                 print("Valore non valido. Inserisci un numero d'ordine intero.")
