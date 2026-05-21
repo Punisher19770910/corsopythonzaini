@@ -1,0 +1,5 @@
+__pycache__/lettura_tabelle.cpython-314.pyc
+__pycache__/ordini.cpython-314.pyc
+__pycache__/*.pyc
+*.db
+*.Identifier

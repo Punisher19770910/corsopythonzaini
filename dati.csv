@@ -1,0 +1,101 @@
+id,data_ordine,quantità,prezzo_unitario,nome_prodotto,id_cliente,stato
+1,2025-01-03,4,9.65,Spazzola,1007,spedito
+2,2025-01-05,7,17.00,Cuffia,1014,consegnato
+3,2025-01-07,10,34.35,Zaino,1021,annullato
+4,2025-01-09,3,27.99,Mouse,1028,in attesa
+5,2025-01-11,6,2.30,Quaderno,1035,in lavorazione
+6,2025-01-13,9,1.95,Penna,1042,spedito
+7,2025-01-15,2,8.90,Tazza,1049,consegnato
+8,2025-01-17,5,15.00,Maglietta,1006,annullato
+9,2025-01-19,8,21.00,Cintura,1013,in attesa
+10,2025-01-21,1,49.99,Orologio,1020,in lavorazione
+11,2025-01-23,4,22.85,Lampada,1027,spedito
+12,2025-01-25,7,11.49,Custodia,1034,consegnato
+13,2025-01-27,10,17.05,Portafoglio,1041,annullato
+14,2025-01-29,3,32.90,Auricolari,1048,in attesa
+15,2025-01-31,6,11.60,Bottiglia,1005,in lavorazione
+16,2025-02-02,9,9.65,Spazzola,1012,spedito
+17,2025-02-04,2,17.00,Cuffia,1019,consegnato
+18,2025-02-06,5,34.35,Zaino,1026,annullato
+19,2025-02-08,8,27.99,Mouse,1033,in attesa
+20,2025-02-10,1,2.30,Quaderno,1040,in lavorazione
+21,2025-02-12,4,1.95,Penna,1047,spedito
+22,2025-02-14,7,8.90,Tazza,1004,consegnato
+23,2025-02-16,10,15.00,Maglietta,1011,annullato
+24,2025-02-18,3,21.00,Cintura,1018,in attesa
+25,2025-02-20,6,49.99,Orologio,1025,in lavorazione
+26,2025-02-22,9,22.85,Lampada,1032,spedito
+27,2025-02-24,2,11.49,Custodia,1039,consegnato
+28,2025-02-26,5,17.05,Portafoglio,1046,annullato
+29,2025-02-28,8,32.90,Auricolari,1003,in attesa
+30,2025-03-02,1,11.60,Bottiglia,1010,in lavorazione
+31,2025-03-04,4,9.65,Spazzola,1017,spedito
+32,2025-03-06,7,17.00,Cuffia,1024,consegnato
+33,2025-03-08,10,34.35,Zaino,1031,annullato
+34,2025-03-10,3,27.99,Mouse,1038,in attesa
+35,2025-03-12,6,2.30,Quaderno,1045,in lavorazione
+36,2025-03-14,9,1.95,Penna,1002,spedito
+37,2025-03-16,2,8.90,Tazza,1009,consegnato
+38,2025-03-18,5,15.00,Maglietta,1016,annullato
+39,2025-03-20,8,21.00,Cintura,1023,in attesa
+40,2025-03-22,1,49.99,Orologio,1030,in lavorazione
+41,2025-03-24,4,22.85,Lampada,1037,spedito
+42,2025-03-26,7,11.49,Custodia,1044,consegnato
+43,2025-03-28,10,17.05,Portafoglio,1001,annullato
+44,2025-03-30,3,32.90,Auricolari,1008,in attesa
+45,2025-04-01,6,11.60,Bottiglia,1015,in lavorazione
+46,2025-04-03,9,9.65,Spazzola,1022,spedito
+47,2025-04-05,2,17.00,Cuffia,1029,consegnato
+48,2025-04-07,5,34.35,Zaino,1036,annullato
+49,2025-04-09,8,27.99,Mouse,1043,in attesa
+50,2025-04-11,1,2.30,Quaderno,1000,in lavorazione
+51,2025-04-13,4,1.95,Penna,1007,spedito
+52,2025-04-15,7,8.90,Tazza,1014,consegnato
+53,2025-04-17,10,15.00,Maglietta,1021,annullato
+54,2025-04-19,3,21.00,Cintura,1028,in attesa
+55,2025-04-21,6,49.99,Orologio,1035,in lavorazione
+56,2025-04-23,9,22.85,Lampada,1042,spedito
+57,2025-04-25,2,11.49,Custodia,1049,consegnato
+58,2025-04-27,5,17.05,Portafoglio,1006,annullato
+59,2025-04-29,8,32.90,Auricolari,1013,in attesa
+60,2025-05-01,1,11.60,Bottiglia,1020,in lavorazione
+61,2025-05-03,4,9.65,Spazzola,1027,spedito
+62,2025-05-05,7,17.00,Cuffia,1034,consegnato
+63,2025-05-07,10,34.35,Zaino,1041,annullato
+64,2025-05-09,3,27.99,Mouse,1048,in attesa
+65,2025-05-11,6,2.30,Quaderno,1005,in lavorazione
+66,2025-05-13,9,1.95,Penna,1012,spedito
+67,2025-05-15,2,8.90,Tazza,1019,consegnato
+68,2025-05-17,5,15.00,Maglietta,1026,annullato
+69,2025-05-19,8,21.00,Cintura,1033,in attesa
+70,2025-05-21,1,49.99,Orologio,1040,in lavorazione
+71,2025-05-23,4,22.85,Lampada,1047,spedito
+72,2025-05-25,7,11.49,Custodia,1004,consegnato
+73,2025-05-27,10,17.05,Portafoglio,1011,annullato
+74,2025-05-29,3,32.90,Auricolari,1018,in attesa
+75,2025-05-31,6,11.60,Bottiglia,1025,in lavorazione
+76,2025-06-02,9,9.65,Spazzola,1032,spedito
+77,2025-06-04,2,17.00,Cuffia,1039,consegnato
+78,2025-06-06,5,34.35,Zaino,1046,annullato
+79,2025-06-08,8,27.99,Mouse,1003,in attesa
+80,2025-06-10,1,2.30,Quaderno,1010,in lavorazione
+81,2025-06-12,4,1.95,Penna,1017,spedito
+82,2025-06-14,7,8.90,Tazza,1024,consegnato
+83,2025-06-16,10,15.00,Maglietta,1031,annullato
+84,2025-06-18,3,21.00,Cintura,1038,in attesa
+85,2025-06-20,6,49.99,Orologio,1045,in lavorazione
+86,2025-06-22,9,22.85,Lampada,1002,spedito
+87,2025-06-24,2,11.49,Custodia,1009,consegnato
+88,2025-06-26,5,17.05,Portafoglio,1016,annullato
+89,2025-06-28,8,32.90,Auricolari,1023,in attesa
+90,2025-06-30,1,11.60,Bottiglia,1030,in lavorazione
+91,2025-07-02,4,9.65,Spazzola,1037,spedito
+92,2025-07-04,7,17.00,Cuffia,1044,consegnato
+93,2025-07-06,10,34.35,Zaino,1001,annullato
+94,2025-07-08,3,27.99,Mouse,1008,in attesa
+95,2025-07-10,6,2.30,Quaderno,1015,in lavorazione
+96,2025-07-12,9,1.95,Penna,1022,spedito
+97,2025-07-14,2,8.90,Tazza,1029,consegnato
+98,2025-07-16,5,15.00,Maglietta,1036,annullato
+99,2025-07-18,8,21.00,Cintura,1043,in attesa
+100,2025-07-20,1,49.99,Orologio,1000,in lavorazione
