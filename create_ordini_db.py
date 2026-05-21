@@ -1,32 +1,24 @@
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Float, ForeignKey
+from pathlib import Path
+from sqlalchemy import create_engine, text
 
 
-def create_database() -> None:
+def create_database_from_sql(sql_file: str = "create_db.sql") -> None:
     engine = create_engine("sqlite:///Ordini.db", echo=False, future=True)
-    metadata = MetaData()
+    sql_path = Path(sql_file)
+    if not sql_path.exists():
+        print(f"File SQL '{sql_file}' non trovato.")
+        return
 
-    Table(
-        "Ordini_testata",
-        metadata,
-        Column("num_ordine", Integer, primary_key=True),
-        Column("data_ordine", String(10), nullable=False),
-        Column("cod_cliente", String(20), nullable=False),
-        Column("tot_prezzo", Float, nullable=False),
-        Column("tot_qty", Integer, nullable=False),
-    )
+    sql = sql_path.read_text()
 
-    Table(
-        "Ordini_righe",
-        metadata,
-        Column("num_ordine", Integer, ForeignKey("Ordini_testata.num_ordine"), nullable=False),
-        Column("cod_articolo", String(20), nullable=False),
-        Column("qty", Integer, nullable=False),
-        Column("prezzo_unitario", Float, nullable=False),
-    )
+    with engine.connect() as conn:
+        with conn.begin():
+            # Split statements on semicolon and execute non-empty ones
+            for stmt in (s.strip() for s in sql.split(";") if s.strip()):
+                conn.execute(text(stmt))
 
-    metadata.create_all(engine)
-    print("Database 'Ordini.db' creato con le tabelle Ordini_testata e Ordini_righe.")
+    print(f"Database 'Ordini.db' creato eseguendo '{sql_file}'.")
 
 
 if __name__ == "__main__":
-    create_database()
+    create_database_from_sql()
