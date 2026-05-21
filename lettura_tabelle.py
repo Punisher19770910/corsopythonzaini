@@ -1,7 +1,7 @@
 import argparse
 from datetime import date
 
-from sqlalchemy import create_engine, MetaData, select, insert
+from sqlalchemy import create_engine, MetaData, text
 from sqlalchemy.exc import IntegrityError
 
 
@@ -14,7 +14,7 @@ def list_table_rows(engine, table_name: str) -> None:
         return
 
     with engine.connect() as conn:
-        stmt = select(table)
+        stmt = text(f'SELECT * FROM "{table_name}"')
         result = conn.execute(stmt)
         rows = result.mappings().all()
 
@@ -36,7 +36,8 @@ def get_order_details(engine, order_number: int) -> None:
 
     with engine.connect() as conn:
         header = conn.execute(
-            select(testata).where(testata.c.num_ordine == order_number)
+            text("SELECT * FROM Ordini_testata WHERE num_ordine = :order_number"),
+            {"order_number": order_number},
         ).mappings().first()
 
         if header is None:
@@ -44,7 +45,8 @@ def get_order_details(engine, order_number: int) -> None:
             return
 
         detail_rows = conn.execute(
-            select(righe).where(righe.c.num_ordine == order_number)
+            text("SELECT * FROM Ordini_righe WHERE num_ordine = :order_number"),
+            {"order_number": order_number},
         ).mappings().all()
 
     print(f"\nOrdine {order_number} - Intestazione:")
@@ -64,7 +66,9 @@ def get_available_order_numbers(engine) -> list[int]:
         return []
 
     with engine.connect() as conn:
-        result = conn.execute(select(testata.c.num_ordine).order_by(testata.c.num_ordine))
+        result = conn.execute(
+            text("SELECT num_ordine FROM Ordini_testata ORDER BY num_ordine")
+        )
         return [row[0] for row in result.fetchall()]
 
 
@@ -127,8 +131,7 @@ def add_order_interactive(engine) -> None:
     }
 
     insert_order_from_dict(engine, order_data)
-
-
+ 
 def insert_order_from_dict(engine, order_data: dict) -> None:
     required_keys = {"testata", "righe"}
     if not required_keys.issubset(order_data):
@@ -157,8 +160,20 @@ def insert_order_from_dict(engine, order_data: dict) -> None:
 
     with engine.begin() as conn:
         try:
-            conn.execute(insert(testata), [header_data])
-            conn.execute(insert(righe), prepared_rows)
+            conn.execute(
+                text(
+                    "INSERT INTO Ordini_testata "
+                    "(num_ordine, data_ordine, cod_cliente, tot_prezzo, tot_qty) "
+                    "VALUES (:num_ordine, :data_ordine, :cod_cliente, :tot_prezzo, :tot_qty)"
+                ),
+                header_data,
+            )
+            line_insert = text(
+                "INSERT INTO Ordini_righe "
+                "(num_ordine, cod_articolo, qty, prezzo_unitario) "
+                "VALUES (:num_ordine, :cod_articolo, :qty, :prezzo_unitario)"
+            )
+            conn.execute(line_insert, prepared_rows)
             print(f"Ordine {order_number} inserito con {len(prepared_rows)} righe.")
         except IntegrityError as exc:
             raise RuntimeError(f"Errore di integrità durante l'inserimento: {exc}") from exc
