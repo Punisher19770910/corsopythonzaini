@@ -52,7 +52,7 @@ def get_order_details(order_number: int) -> dict | None:
         ).mappings().all()
 
     order_data = {
-        "header": dict(header),
+        "testata": dict(header),
         "righe": [dict(r) for r in detail_rows],
     }
     json_output = json.dumps(order_data, ensure_ascii=False, indent=2)
@@ -100,7 +100,7 @@ def get_orders_by_article_code(article_code: str) -> list[dict]:
 
             current_order_number = order_number
             current_order = {
-                "header": {
+                "testata": {
                     key: row[key]
                     for key in row.keys()
                     if key in testata.columns.keys()
@@ -159,7 +159,7 @@ def ask_float(prompt: str, default: float | None = None) -> float | None:
             print("Valore non valido. Inserisci un numero.")
 
 
-def add_order_interactive(engine) -> None:
+def add_order_interactive() -> None:
     print("\nAggiungi un nuovo ordine:")
     num_ordine = ask_int("Numero ordine: ")
     if num_ordine is None:
@@ -195,9 +195,10 @@ def add_order_interactive(engine) -> None:
         "righe": righe,
     }
 
-    insert_order_from_dict(engine, order_data)
+    insert_order_from_dict(order_data)
  
-def insert_order_from_dict(engine, order_data: dict) -> None:
+def insert_order_from_dict(order_data: dict) -> int:
+    engine = create_db_engine()
     required_keys = {"testata", "righe"}
     if not required_keys.issubset(order_data):
         raise ValueError("Il dizionario deve contenere le chiavi 'testata' e 'righe'.")
@@ -242,6 +243,48 @@ def insert_order_from_dict(engine, order_data: dict) -> None:
             print(f"Ordine {order_number} inserito con {len(prepared_rows)} righe.")
         except IntegrityError as exc:
             raise RuntimeError(f"Errore di integrità durante l'inserimento: {exc}") from exc
+    return order_number
+
+
+def insert_order(order_data: dict, db_path: str = "Ordini.db") -> None:
+    """Insert a single order into the database.
+
+    Accepts order dicts with keys either `testata` or `header` and a `righe` list.
+    """
+    if not isinstance(order_data, dict):
+        raise ValueError("order_data deve essere un dizionario")
+
+    if "testata" not in order_data:
+        raise ValueError("Il dizionario deve contenere la chiave 'testata'.")
+
+    od = order_data
+    engine = create_db_engine(db_path)
+    try:
+        insert_order_from_dict(engine, od)
+    except Exception as exc:
+        print(f"Errore durante l'inserimento ordine {od.get('testata', {}).get('num_ordine')}: {exc}")
+        raise
+
+
+def insert_orders(orders: list[dict], db_path: str = "Ordini.db") -> None:
+    """Insert multiple orders (list of dicts) into the database using a single engine.
+
+    Each item may use `header` or `testata` as the header key.
+    """
+    if not isinstance(orders, (list, tuple)):
+        raise ValueError("orders deve essere una lista di dizionari")
+
+    engine = create_db_engine(db_path)
+    for order_data in orders:
+        if not isinstance(order_data, dict):
+            raise ValueError("Ogni elemento di orders deve essere un dizionario")
+        if "testata" not in order_data:
+            raise ValueError("Ogni dizionario deve contenere la chiave 'testata'.")
+        try:
+            insert_order_from_dict(engine, order_data)
+        except Exception as exc:
+            print(f"Errore inserimento ordine {order_data.get('testata', {}).get('num_ordine')}: {exc}")
+            raise
 
 def create_db_engine(db_path: str = "Ordini.db"):
     return create_engine(f"sqlite:///{db_path}", echo=False, future=True)
@@ -259,7 +302,7 @@ def main() -> None:
 
     action = input("Vuoi aggiungere un ordine (A) o leggere un ordine specifico (L)? [L]: ").strip().lower()
     if action == "a":
-        add_order_interactive(engine)
+        add_order_interactive()
         return
 
     available_orders = get_available_order_numbers()

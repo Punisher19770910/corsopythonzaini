@@ -18,3 +18,8 @@ async def get_ordini():
 async def get_ordini_by_article_code(article_code: str):
     ordini_prelevati = ordini.get_orders_by_article_code(article_code)
     return ordini_prelevati
+
+@app.post("/ordini")
+async def create_ordine(order_data: dict):
+    ordine_inserito = ordini.insert_order_from_dict(order_data)
+    return {"message": "Ordine inserito con successo", "ordine": ordine_inserito}
